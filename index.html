@@ -20,9 +20,11 @@
   <header class="site-header">
     <div class="header-inner">
       <button class="brand" type="button" data-go="inicio" aria-label="Ir al inicio">
-        <span class="brand-mark" aria-hidden="true">4</span>
-        <span>
-          <strong>Jornadas 4 IES</strong>
+        <span class="brand-logo-shell">
+          <img src="assets/logo-jornadas.png" alt="Los Cuatro IES · Grupo de Investigación y Extensión">
+        </span>
+        <span class="brand-copy">
+          <strong>XV Jornadas</strong>
           <small>Valle de Uco · 2026</small>
         </span>
       </button>
@@ -47,7 +49,8 @@
       <div class="hero wrap">
         <div class="hero-copy">
           <p class="eyebrow">XV Jornadas de Investigación y Extensión</p>
-          <h1>Cuatro institutos.<br><span>Un territorio que aprende.</span></h1>
+          <h1>15 años,<br><span>cuatro institutos.</span></h1>
+          <p class="hero-statement">Educación Superior que transforma el territorio.</p>
           <p class="hero-date">1 y 2 de octubre · IES 9-010 Rosario Vera Peñaloza</p>
           <div class="hero-actions">
             <button class="button primary" type="button" data-go="cronograma">Ver cronograma</button>
@@ -101,6 +104,17 @@
             <span><small>Almuerzo</small><strong>Ver el menú</strong></span>
             <b aria-hidden="true">→</b>
           </button>
+        </section>
+
+        <section class="host-section glass" aria-labelledby="host-title">
+          <div class="host-logo-shell">
+            <img src="assets/logo-vera.png" alt="IES 9-010 Rosario Vera Peñaloza">
+          </div>
+          <div class="host-copy">
+            <span class="section-kicker">Institución anfitriona 2026</span>
+            <h2 id="host-title">IES 9-010 Rosario Vera Peñaloza</h2>
+            <p>El Vera recibe a los cuatro institutos del Valle de Uco para compartir dos jornadas de investigación, extensión y encuentro.</p>
+          </div>
         </section>
       </div>
     </section>
@@ -379,15 +393,26 @@
         <img src="assets/logo-tupungato.png" alt="IES 9-009 Tupungato">
       </div>
       <p class="footer-copy">15 años, cuatro institutos. Educación Superior que transforma el territorio.</p>
+      <p class="footer-credit">Sitio y aplicación diseñados por el Área de Políticas Digitales del IES Vera Peñaloza.</p>
     </div>
   </footer>
 
   <nav class="bottom-nav" aria-label="Navegación principal">
-    <button class="active" type="button" data-go="inicio"><span aria-hidden="true">⌂</span><small>Inicio</small></button>
-    <button type="button" data-go="cronograma"><span aria-hidden="true">▤</span><small>Agenda</small></button>
-    <button type="button" data-go="mapa"><span aria-hidden="true">⌖</span><small>Mapa</small></button>
-    <button type="button" data-go="menu"><span aria-hidden="true">⌁</span><small>Menú</small></button>
-    <button type="button" data-go="memorias"><span aria-hidden="true">◫</span><small>Memorias</small></button>
+    <button class="active" type="button" data-go="inicio">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 10.8 12 3.7l8.5 7.1"/><path d="M5.5 9.2v10.3h13V9.2M9.5 19.5v-6h5v6"/></svg></span><small>Inicio</small>
+    </button>
+    <button type="button" data-go="cronograma">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M7.5 3.5v4M16.5 3.5v4M3.5 9.5h17M7.5 13h3M13.5 13h3M7.5 16.5h3"/></svg></span><small>Agenda</small>
+    </button>
+    <button type="button" data-go="mapa">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 5.3-8 11-8 11s-8-5.7-8-11a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/></svg></span><small>Mapa</small>
+    </button>
+    <button type="button" data-go="menu">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/></svg></span><small>Menú</small>
+    </button>
+    <button type="button" data-go="memorias">
+      <span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="9.5" r="1.5"/><path d="m5.5 17 4.3-4.2 3.2 3 2.4-2.2 3.1 3.4"/></svg></span><small>Memorias</small>
+    </button>
   </nav>
 
   <dialog id="activity-dialog" class="modal">
