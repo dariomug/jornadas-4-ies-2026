@@ -16,7 +16,31 @@ const state = {
   space: "all",
   hasLoaded: false,
   isLoading: false,
-  lastUpdated: null
+  lastUpdated: null,
+  selectedMapSpace: "sum"
+};
+
+const MAP_SPACES = {
+  "sum": { label: "SUM", aliases: ["sum", "salon de usos multiples"] },
+  "aula-1": { label: "Aula 1", aliases: ["aula 1"] },
+  "aula-2": { label: "Aula 2", aliases: ["aula 2"] },
+  "aula-4": { label: "Aula 4", aliases: ["aula 4"] },
+  "aula-5": { label: "Aula 5", aliases: ["aula 5"] },
+  "aula-6": { label: "Aula 6", aliases: ["aula 6"] },
+  "aula-7": { label: "Aula 7", aliases: ["aula 7"] },
+  "aula-8": { label: "Aula 8", aliases: ["aula 8"] },
+  "aula-9": { label: "Aula 9", aliases: ["aula 9"] },
+  "aula-10": { label: "Aula 10", aliases: ["aula 10"] },
+  "aula-11": { label: "Aula 11", aliases: ["aula 11"] },
+  "aula-12": { label: "Aula 12", aliases: ["aula 12"] },
+  "aulas-13-14": { label: "Aulas 13 y 14", aliases: ["aula 13", "aula 14", "aulas 13 y 14", "aulas 13-14"] },
+  "aula-musica": { label: "Aula de Música", aliases: ["aula musica", "aula de musica"] },
+  "laboratorio": { label: "Laboratorio de Informática", aliases: ["laboratorio", "laboratorio informatica", "laboratorio de informatica"] },
+  "biblioteca": { label: "Biblioteca", aliases: ["biblioteca"] },
+  "taller-arte": { label: "Taller de Arte", aliases: ["taller de arte", "espacio de arte vera", "espacio arte vera"] },
+  "aula-abierta": { label: "Aula abierta", aliases: ["aula abierta"] },
+  "patio-artesanos": { label: "Patio de artesanos", aliases: ["patio artesanos", "patio de artesanos"] },
+  "corredor-4-8": { label: "Corredor de aulas 4 a 8", aliases: ["corredor aulas 4 a 8", "corredor de aulas 4 a 8", "corredor 4 a 8"] }
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -284,21 +308,76 @@ function renderSchedule() {
   }).join("") : `<div class="empty-state"><strong>No encontramos actividades</strong><span>Probá quitando algún filtro o usando otra búsqueda.</span></div>`;
 }
 
+function mapActivities(key) {
+  const definition = MAP_SPACES[key];
+  if (!definition) return [];
+  const aliases = definition.aliases.map(normalizeKey);
+  return getActivities().filter(item => {
+    const spaceId = normalizeKey(valueOf(item, "espacio_id", "id_espacio"));
+    const spaceName = normalizeKey(valueOf(item, "espacio", "aula"));
+    return normalizeKey(key) === spaceId || aliases.includes(spaceId) || aliases.includes(spaceName);
+  });
+}
+
+function mapSpaceInfo(key, now = new Date()) {
+  const activities = mapActivities(key);
+  return {
+    definition: MAP_SPACES[key],
+    activities,
+    live: activities.find(item => activityStatus(item, now) === "live") || null,
+    next: activities.find(item => activityStatus(item, now) === "upcoming") || null,
+    finished: activities.length > 0 && activities.every(item => ["finished", "cancelled"].includes(activityStatus(item, now)))
+  };
+}
+
 function renderMap() {
   const now = new Date();
-  const activities = getActivities();
-  const sourceSpaces = visibleRows(state.data.espacios);
-  const names = sourceSpaces.length
-    ? sourceSpaces.map(item => valueOf(item,"nombre","espacio","aula"))
-    : [...new Set(activities.map(item => valueOf(item,"espacio","aula")).filter(Boolean))];
-  const rows = names.map(name => {
-    const matches = activities.filter(item => normalizeKey(valueOf(item,"espacio","aula")) === normalizeKey(name));
-    const live = matches.find(item => activityStatus(item, now) === "live");
-    const next = matches.find(item => activityStatus(item, now) === "upcoming");
-    const item = live || next;
-    return `<div class="space-row"><div><strong>${escapeHtml(name)}</strong><small>${item ? escapeHtml(valueOf(item,"titulo","actividad")) : "Sin actividad programada ahora"}</small></div><span class="space-state ${live ? "live" : ""}">${live ? "En curso" : next ? formatTime(valueOf(next,"inicio")) : "—"}</span></div>`;
+  $$("[data-map-key]").forEach(element => {
+    const key = element.dataset.mapKey;
+    const info = mapSpaceInfo(key, now);
+    element.classList.remove("is-live", "is-next", "is-finished", "is-free", "is-selected");
+    const status = info.live ? "is-live" : info.next ? "is-next" : info.finished ? "is-finished" : "is-free";
+    element.classList.add(status);
+    element.classList.toggle("is-selected", key === state.selectedMapSpace);
+    const statusText = info.live ? "En curso" : info.next ? `Próxima ${formatTime(valueOf(info.next,"inicio"))}` : info.finished ? "Finalizada" : "Sin actividad ahora";
+    element.setAttribute("aria-label", `${info.definition?.label || key}. ${statusText}`);
+    const text = $(".map-status-text", element);
+    if (text) text.textContent = statusText;
   });
-  $("#spaces-list").innerHTML = rows.length ? rows.join("") : `<div class="empty-state"><strong>Espacios en preparación</strong><span>La información aparecerá cuando esté disponible.</span></div>`;
+
+  const rows = Object.entries(MAP_SPACES).map(([key, definition]) => {
+    const info = mapSpaceInfo(key, now);
+    const item = info.live || info.next;
+    const stateClass = info.live ? "live" : info.next ? "next" : "";
+    const stateText = info.live ? "En curso" : info.next ? formatTime(valueOf(info.next,"inicio")) : "—";
+    return `<button class="space-row ${key === state.selectedMapSpace ? "is-selected" : ""}" type="button" data-map-select="${escapeHtml(key)}"><span><strong>${escapeHtml(definition.label)}</strong><small>${item ? escapeHtml(valueOf(item,"titulo","actividad")) : "Sin actividad programada ahora"}</small></span><span class="space-state ${stateClass}">${stateText}</span></button>`;
+  });
+  $("#spaces-list").innerHTML = rows.join("");
+
+  if (!MAP_SPACES[state.selectedMapSpace]) {
+    const firstLive = Object.keys(MAP_SPACES).find(key => mapSpaceInfo(key, now).live);
+    state.selectedMapSpace = firstLive || "sum";
+  }
+  selectMapSpace(state.selectedMapSpace, false);
+}
+
+function selectMapSpace(key, scrollIntoView = false) {
+  if (!MAP_SPACES[key]) return;
+  state.selectedMapSpace = key;
+  const info = mapSpaceInfo(key);
+  const current = info.live || info.next;
+  const status = info.live ? "live" : info.next ? "upcoming" : info.finished ? "finished" : "";
+  const statusText = info.live ? "En curso" : info.next ? "Próximamente" : info.finished ? "Actividades finalizadas" : "Sin actividad ahora";
+  const nextAfterLive = info.live ? info.activities.find(item => activityStatus(item) === "upcoming") : null;
+  const actualSpace = current ? valueOf(current, "espacio", "aula") : info.definition.label;
+
+  $("#map-selection").innerHTML = current
+    ? `<span class="status-badge ${status}">${statusText}</span><strong class="selection-title">${escapeHtml(info.definition.label)}</strong><span>${escapeHtml(valueOf(current,"titulo","actividad"))}</span><span class="selection-meta">${formatTime(valueOf(current,"inicio"))}–${formatTime(valueOf(current,"fin"))} · ${escapeHtml(valueOf(current,"tipo","categoria"))}</span>${nextAfterLive ? `<div class="selection-next"><small>Después, a las ${formatTime(valueOf(nextAfterLive,"inicio"))}</small><strong>${escapeHtml(valueOf(nextAfterLive,"titulo","actividad"))}</strong></div>` : ""}<button class="map-agenda-button" type="button" data-map-agenda="${escapeHtml(actualSpace)}" data-map-day="${escapeHtml(localDateKey(valueOf(current,"inicio")))}">Ver en la agenda →</button>`
+    : `<span class="status-badge finished">${statusText}</span><strong class="selection-title">${escapeHtml(info.definition.label)}</strong><span>No hay una actividad programada en este momento.</span>`;
+
+  $$("[data-map-key]").forEach(element => element.classList.toggle("is-selected", element.dataset.mapKey === key));
+  $$("[data-map-select]").forEach(button => button.classList.toggle("is-selected", button.dataset.mapSelect === key));
+  if (scrollIntoView) $("#map-selection").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function renderMenu() {
@@ -408,8 +487,6 @@ document.addEventListener("click", event => {
   const activity = event.target.closest("[data-activity-id]");
   if (activity) showActivity(activity.dataset.activityId);
   if (event.target.closest("[data-close-dialog]")) $("#activity-dialog").close();
-  if (event.target.closest("#open-map")) $("#map-dialog").showModal();
-  if (event.target.closest("[data-close-map]")) $("#map-dialog").close();
   if (event.target.closest("[data-close-food]")) closeFoodPopup();
   if (event.target.closest("[data-open-menu]")) { closeFoodPopup(); showView("menu"); }
   if (event.target.closest("[data-retry]")) loadData();
@@ -418,6 +495,24 @@ document.addEventListener("click", event => {
     state.day = dayButton.dataset.day;
     $$("#day-filter button").forEach(button => button.classList.toggle("active", button === dayButton));
     renderSchedule();
+  }
+  const mapSpace = event.target.closest("[data-map-key], [data-map-select]");
+  if (mapSpace) selectMapSpace(mapSpace.dataset.mapKey || mapSpace.dataset.mapSelect, true);
+  const mapAgenda = event.target.closest("[data-map-agenda]");
+  if (mapAgenda) {
+    state.space = mapAgenda.dataset.mapAgenda;
+    state.day = mapAgenda.dataset.mapDay || "all";
+    $("#space-filter").value = state.space;
+    $$("#day-filter button").forEach(button => button.classList.toggle("active", button.dataset.day === state.day));
+    showView("cronograma");
+  }
+});
+
+document.addEventListener("keydown", event => {
+  const mapSpace = event.target.closest?.("[data-map-key]");
+  if (mapSpace && ["Enter", " "].includes(event.key)) {
+    event.preventDefault();
+    selectMapSpace(mapSpace.dataset.mapKey, true);
   }
 });
 
@@ -428,7 +523,7 @@ $("#status-filter").addEventListener("change", event => { state.status = event.t
 $("#type-filter").addEventListener("change", event => { state.type = event.target.value; renderSchedule(); });
 $("#space-filter").addEventListener("change", event => { state.space = event.target.value; renderSchedule(); });
 
-[$("#activity-dialog"), $("#map-dialog"), $("#food-popup")].forEach(dialog => dialog.addEventListener("click", event => {
+[$("#activity-dialog"), $("#food-popup")].forEach(dialog => dialog.addEventListener("click", event => {
   if (event.target === dialog) {
     if (dialog.id === "food-popup") closeFoodPopup(); else dialog.close();
   }

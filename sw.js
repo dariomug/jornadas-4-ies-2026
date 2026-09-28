@@ -1,4 +1,4 @@
-const CACHE_NAME = "jornadas-4-ies-shell-v2";
+const CACHE_NAME = "jornadas-4-ies-shell-v3";
 const SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./assets/app-icon.svg", "./assets/mapa-ies.png"];
 
 self.addEventListener("install", event => event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting())));

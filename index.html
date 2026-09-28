@@ -149,18 +149,187 @@
       <div class="page-heading">
         <p class="eyebrow">IES 9-010 Rosario Vera Peñaloza</p>
         <h1>Mapa de espacios</h1>
-        <p>Tocá el plano para ampliarlo. Debajo podés consultar qué sucede en cada espacio.</p>
+        <p>Seleccioná un espacio para ver qué está sucediendo y cuál es su próxima actividad.</p>
       </div>
       <div class="map-layout">
-        <button class="map-frame glass" id="open-map" type="button" aria-label="Ampliar mapa del instituto">
-          <img src="assets/mapa-ies.png" alt="Croquis del IES 9-010 Rosario Vera Peñaloza con aulas y espacios">
-          <span>Ampliar plano</span>
-        </button>
+        <div class="map-frame glass">
+          <div class="map-toolbar">
+            <div class="map-legend" aria-label="Referencias del mapa">
+              <span><i class="legend-live"></i> En curso</span>
+              <span><i class="legend-next"></i> Próximamente</span>
+              <span><i class="legend-free"></i> Sin actividad ahora</span>
+            </div>
+            <span class="map-north" aria-label="El norte está hacia arriba">N ↑</span>
+          </div>
+          <div class="map-scroll" id="interactive-map">
+            <svg class="ies-map" viewBox="0 0 1200 760" role="img" aria-labelledby="map-title map-description">
+              <title id="map-title">Mapa interactivo del IES 9-010 Rosario Vera Peñaloza</title>
+              <desc id="map-description">Distribución esquemática de aulas, SUM, biblioteca, patios y espacios de las jornadas. Los espacios coloreados pueden seleccionarse.</desc>
+
+              <path class="map-circulation" d="M145 280H1080V690H175V390H145Z" />
+              <text class="map-zone-label" x="600" y="674">CIRCULACIÓN PRINCIPAL</text>
+
+              <g class="map-building map-utility">
+                <rect x="75" y="52" width="215" height="70" rx="13" />
+                <text x="182" y="82">Jardín Maternal</text>
+                <text class="map-small" x="182" y="103">Sector norte</text>
+              </g>
+
+              <g class="map-space" data-map-key="aulas-13-14" role="button" tabindex="0">
+                <rect x="305" y="52" width="185" height="70" rx="13" />
+                <text x="397" y="82">Aulas 13 y 14</text>
+                <text class="map-status-text" x="397" y="104">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="75" y="136" width="415" height="46" rx="11" />
+                <text x="282" y="165">Baños · Antesala · Taller de reparaciones</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-12" role="button" tabindex="0">
+                <rect x="160" y="195" width="240" height="66" rx="13" />
+                <text x="280" y="223">Aula 12</text>
+                <text class="map-status-text" x="280" y="245">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-space map-feature" data-map-key="sum" role="button" tabindex="0">
+                <rect x="145" y="280" width="470" height="120" rx="18" />
+                <text x="380" y="330">SUM</text>
+                <text class="map-subtitle" x="380" y="355">Salón de Usos Múltiples</text>
+                <text class="map-status-text" x="380" y="380">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-11" role="button" tabindex="0">
+                <rect x="630" y="280" width="130" height="120" rx="14" />
+                <text x="695" y="326">Aula 11</text>
+                <text class="map-status-text" x="695" y="352">Sin actividad</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="630" y="414" width="130" height="54" rx="11" />
+                <text x="695" y="446">Bedelía</text>
+              </g>
+
+              <g class="map-entry" aria-label="Ingreso principal">
+                <path d="M145 360H92" />
+                <circle cx="86" cy="360" r="8" />
+                <text x="82" y="338">INGRESO</text>
+              </g>
+
+              <g class="map-space map-corridor-space" data-map-key="aula-abierta" role="button" tabindex="0">
+                <rect x="145" y="420" width="80" height="215" rx="15" />
+                <text transform="translate(180 528) rotate(-90)">Aula abierta</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="240" y="420" width="290" height="48" rx="11" />
+                <text x="385" y="450">Secretaría</text>
+              </g>
+              <g class="map-building map-utility">
+                <rect x="240" y="480" width="290" height="48" rx="11" />
+                <text x="385" y="510">Rectoría</text>
+              </g>
+              <g class="map-space" data-map-key="biblioteca" role="button" tabindex="0">
+                <rect x="240" y="540" width="290" height="95" rx="14" />
+                <text x="385" y="578">Biblioteca</text>
+                <text class="map-status-text" x="385" y="604">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="555" y="500" width="100" height="58" rx="11" />
+                <text x="605" y="534">Kiosco</text>
+              </g>
+
+              <g class="map-space" data-map-key="laboratorio" role="button" tabindex="0">
+                <rect x="670" y="500" width="225" height="135" rx="15" />
+                <text x="782" y="550">Laboratorio</text>
+                <text x="782" y="574">de Informática</text>
+                <text class="map-status-text" x="782" y="604">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-9" role="button" tabindex="0">
+                <rect x="910" y="500" width="105" height="135" rx="14" />
+                <text x="962" y="552">Aula 9</text>
+                <text class="map-status-text" x="962" y="579">Sin actividad</text>
+              </g>
+
+              <g class="map-space" data-map-key="taller-arte" role="button" tabindex="0">
+                <rect x="1040" y="405" width="115" height="155" rx="15" />
+                <text x="1097" y="463">Taller</text>
+                <text x="1097" y="486">de Arte</text>
+                <text class="map-status-text" x="1097" y="518">Sin actividad</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-1" role="button" tabindex="0">
+                <rect x="240" y="650" width="135" height="76" rx="13" />
+                <text x="307" y="680">Aula 1</text>
+                <text class="map-status-text" x="307" y="705">Sin actividad</text>
+              </g>
+              <g class="map-space" data-map-key="aula-2" role="button" tabindex="0">
+                <rect x="390" y="650" width="140" height="76" rx="13" />
+                <text x="460" y="680">Aula 2</text>
+                <text class="map-status-text" x="460" y="705">Sin actividad</text>
+              </g>
+
+              <g class="map-space map-corridor-space" data-map-key="corredor-4-8" role="button" tabindex="0">
+                <rect x="670" y="650" width="455" height="30" rx="10" />
+                <text x="897" y="671">Corredor de aulas 4 a 8</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-musica" role="button" tabindex="0">
+                <rect x="600" y="690" width="82" height="62" rx="12" />
+                <text x="641" y="715">Aula</text><text x="641" y="735">Música</text>
+              </g>
+              <g class="map-space" data-map-key="aula-4" role="button" tabindex="0">
+                <rect x="692" y="690" width="76" height="62" rx="12" /><text x="730" y="726">Aula 4</text>
+              </g>
+              <g class="map-space" data-map-key="aula-5" role="button" tabindex="0">
+                <rect x="778" y="690" width="76" height="62" rx="12" /><text x="816" y="726">Aula 5</text>
+              </g>
+              <g class="map-space" data-map-key="aula-6" role="button" tabindex="0">
+                <rect x="864" y="690" width="76" height="62" rx="12" /><text x="902" y="726">Aula 6</text>
+              </g>
+              <g class="map-space" data-map-key="aula-7" role="button" tabindex="0">
+                <rect x="950" y="690" width="76" height="62" rx="12" /><text x="988" y="726">Aula 7</text>
+              </g>
+              <g class="map-space" data-map-key="aula-8" role="button" tabindex="0">
+                <rect x="1036" y="690" width="89" height="62" rx="12" /><text x="1080" y="726">Aula 8</text>
+              </g>
+
+              <g class="map-space" data-map-key="aula-10" role="button" tabindex="0">
+                <rect x="1040" y="590" width="115" height="48" rx="11" /><text x="1097" y="620">Aula 10</text>
+              </g>
+
+              <g class="map-space map-outdoor" data-map-key="patio-artesanos" role="button" tabindex="0">
+                <rect x="20" y="590" width="180" height="136" rx="18" />
+                <text x="110" y="642">Patio de</text><text x="110" y="667">artesanos</text>
+                <text class="map-status-text" x="110" y="699">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="20" y="420" width="105" height="145" rx="13" />
+                <text transform="translate(67 492) rotate(-90)">Estacionamiento</text>
+              </g>
+
+              <g class="map-building map-utility">
+                <rect x="545" y="52" width="610" height="182" rx="20" />
+                <text x="850" y="132">Patio central</text>
+                <text class="map-small" x="850" y="158">Espacio abierto</text>
+              </g>
+            </svg>
+          </div>
+          <p class="map-swipe-hint">Deslizá horizontalmente para recorrer todo el edificio.</p>
+        </div>
         <aside class="spaces-panel glass">
           <div class="panel-heading">
-            <span class="section-kicker live-kicker"><i></i> En vivo</span>
-            <h2>Actividad por espacio</h2>
+            <span class="section-kicker">Espacio seleccionado</span>
+            <h2>¿Qué sucede acá?</h2>
           </div>
+          <div id="map-selection" class="map-selection" aria-live="polite">
+            <strong>Seleccioná un espacio en el mapa</strong>
+            <span>Vas a ver su actividad actual y lo próximo.</span>
+          </div>
+          <h3 class="spaces-subtitle">Todos los espacios</h3>
           <div id="spaces-list" class="spaces-list"></div>
         </aside>
       </div>
@@ -224,11 +393,6 @@
   <dialog id="activity-dialog" class="modal">
     <button class="modal-close" type="button" data-close-dialog aria-label="Cerrar">×</button>
     <div id="activity-detail"></div>
-  </dialog>
-
-  <dialog id="map-dialog" class="modal map-modal">
-    <button class="modal-close" type="button" data-close-map aria-label="Cerrar">×</button>
-    <div class="zoom-map"><img src="assets/mapa-ies.png" alt="Croquis ampliado del IES 9-010 Rosario Vera Peñaloza"></div>
   </dialog>
 
   <dialog id="food-popup" class="modal food-popup">
