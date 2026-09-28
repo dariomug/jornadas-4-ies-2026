@@ -26,9 +26,18 @@
           <small>Valle de Uco · 2026</small>
         </span>
       </button>
-      <div class="live-pill" id="connection-status" role="status">
-        <span class="status-dot"></span>
-        <span>Conectando…</span>
+      <div class="header-tools">
+        <button class="refresh-button" id="refresh-button" type="button" aria-label="Actualizar información ahora">
+          <span class="refresh-icon" aria-hidden="true">↻</span>
+          <span class="refresh-text">Actualizar</span>
+        </button>
+        <div class="live-pill" id="connection-status" role="status" aria-live="polite">
+          <span class="status-dot"></span>
+          <span class="connection-copy">
+            <strong id="connection-label">Conectando…</strong>
+            <small id="last-updated">Esperando datos</small>
+          </span>
+        </div>
       </div>
     </div>
   </header>

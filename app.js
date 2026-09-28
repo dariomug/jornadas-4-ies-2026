@@ -13,7 +13,10 @@ const state = {
   query: "",
   status: "all",
   type: "all",
-  space: "all"
+  space: "all",
+  hasLoaded: false,
+  isLoading: false,
+  lastUpdated: null
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -93,30 +96,53 @@ function visibleRows(rows) {
   return (Array.isArray(rows) ? rows : []).filter(row => isTrue(valueOf(row, "visible", "activo", "publicar"), true));
 }
 
-async function loadData() {
+function setConnectionStatus(mode, label, date = null) {
   const connection = $("#connection-status");
+  connection.className = `live-pill ${mode}`;
+  $("#connection-label").textContent = label;
+  $("#last-updated").textContent = date ? `Última actualización: ${formatTime(date)}` : "Esperando datos";
+}
+
+async function loadData({ manual = false } = {}) {
+  if (state.isLoading) return;
+  state.isLoading = true;
+  const refreshButton = $("#refresh-button");
+  refreshButton.disabled = true;
+  refreshButton.classList.add("loading");
+  setConnectionStatus("loading", "Actualizando…", state.lastUpdated);
   try {
     const response = await fetch(`${API_URL}?t=${Date.now()}`, { redirect: "follow", cache: "no-store" });
     if (!response.ok) throw new Error(`Respuesta ${response.status}`);
     const data = await response.json();
     if (!data || data.ok === false) throw new Error(data?.error || "La API no respondió correctamente");
     state.data = { ...state.data, ...data };
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data: state.data }));
-    connection.className = "live-pill online";
-    connection.innerHTML = '<span class="status-dot"></span><span>Datos actualizados</span>';
+    state.lastUpdated = new Date();
+    state.hasLoaded = true;
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: state.lastUpdated.getTime(), data: state.data }));
+    setConnectionStatus("online", "Datos actualizados", state.lastUpdated);
+    if (manual) showToast("Información actualizada");
   } catch (error) {
     const cached = readCache();
-    if (cached) {
+    if (state.hasLoaded) {
+      setConnectionStatus("offline", "No se pudo actualizar", state.lastUpdated);
+      if (manual) showToast("No se pudo actualizar. Se mantienen los datos anteriores");
+    } else if (cached) {
       state.data = { ...state.data, ...cached.data };
-      connection.className = "live-pill offline";
-      connection.innerHTML = '<span class="status-dot"></span><span>Mostrando última actualización</span>';
+      state.lastUpdated = new Date(cached.savedAt || Date.now());
+      state.hasLoaded = true;
+      setConnectionStatus("offline", "Datos guardados", state.lastUpdated);
       showToast("Sin conexión: se muestran los últimos datos guardados");
     } else {
-      connection.className = "live-pill offline";
-      connection.innerHTML = '<span class="status-dot"></span><span>No se pudieron cargar los datos</span>';
+      state.hasLoaded = true;
+      setConnectionStatus("offline", "Sin conexión", null);
       renderLoadError(error);
       return;
     }
+    console.error(error);
+  } finally {
+    state.isLoading = false;
+    refreshButton.disabled = false;
+    refreshButton.classList.remove("loading");
   }
   populateFilters();
   renderAll();
@@ -232,6 +258,10 @@ function populateFilters() {
 }
 
 function renderSchedule() {
+  if (!state.hasLoaded) {
+    $("#schedule-results").innerHTML = `<div class="empty-state"><strong>Actualizando programación…</strong><span>Estamos consultando los últimos cambios.</span></div>`;
+    return;
+  }
   const query = normalizeKey(state.query);
   const filtered = getActivities().filter(item => {
     const haystack = normalizeKey([valueOf(item,"titulo","actividad"), valueOf(item,"responsables","expositores"), valueOf(item,"espacio","aula"), valueOf(item,"instituto","ies")].join(" "));
@@ -391,6 +421,8 @@ document.addEventListener("click", event => {
   }
 });
 
+$("#refresh-button").addEventListener("click", () => loadData({ manual: true }));
+
 $("#schedule-search").addEventListener("input", event => { state.query = event.target.value; renderSchedule(); });
 $("#status-filter").addEventListener("change", event => { state.status = event.target.value; renderSchedule(); });
 $("#type-filter").addEventListener("change", event => { state.type = event.target.value; renderSchedule(); });
@@ -403,9 +435,25 @@ $("#space-filter").addEventListener("change", event => { state.space = event.tar
 }));
 
 window.addEventListener("hashchange", () => showView(location.hash.slice(1) || "inicio", false));
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && (!state.lastUpdated || Date.now() - state.lastUpdated.getTime() > 15000)) loadData();
+});
+window.addEventListener("focus", () => {
+  if (!state.lastUpdated || Date.now() - state.lastUpdated.getTime() > 15000) loadData();
+});
+window.addEventListener("online", () => loadData());
+
+function scheduleNextRefresh() {
+  const jitter = Math.round((Math.random() - 0.5) * 30000);
+  const delay = Math.max(90000, 120000 + jitter);
+  window.setTimeout(async () => {
+    await loadData();
+    scheduleNextRefresh();
+  }, delay);
+}
+
 showView(location.hash.slice(1) || "inicio", false);
-loadData();
+loadData().finally(scheduleNextRefresh);
 setInterval(() => { renderAll(); }, 60000);
-setInterval(loadData, 300000);
 
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(console.error));
