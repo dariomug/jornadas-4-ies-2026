@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4d2375">
+  <meta name="description" content="Cronograma en vivo, mapa, menú y memorias de las XV Jornadas de Investigación y Extensión de los 4 IES del Valle de Uco.">
+  <title>Jornadas 4 IES 2026</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Ir al contenido</a>
+
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="brand" type="button" data-go="inicio" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">4</span>
+        <span>
+          <strong>Jornadas 4 IES</strong>
+          <small>Valle de Uco · 2026</small>
+        </span>
+      </button>
+      <div class="live-pill" id="connection-status" role="status">
+        <span class="status-dot"></span>
+        <span>Conectando…</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="view active" id="view-inicio" data-view="inicio">
+      <div class="hero wrap">
+        <div class="hero-copy">
+          <p class="eyebrow">XV Jornadas de Investigación y Extensión</p>
+          <h1>Cuatro institutos.<br><span>Un territorio que aprende.</span></h1>
+          <p class="hero-date">1 y 2 de octubre · IES 9-010 Rosario Vera Peñaloza</p>
+          <div class="hero-actions">
+            <button class="button primary" type="button" data-go="cronograma">Ver cronograma</button>
+            <button class="button secondary" type="button" data-go="mapa">Cómo llegar a cada espacio</button>
+          </div>
+        </div>
+        <div class="event-card glass" id="event-status-card" aria-live="polite">
+          <span class="event-card-label">Estado del encuentro</span>
+          <strong>Cargando información…</strong>
+        </div>
+      </div>
+
+      <div class="wrap section-stack">
+        <div id="alerts-home" class="alerts" aria-live="polite"></div>
+
+        <section aria-labelledby="ahora-title">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker live-kicker"><i></i> En este momento</span>
+              <h2 id="ahora-title">Qué está pasando ahora</h2>
+            </div>
+            <button class="text-button" type="button" data-go="cronograma">Ver todo</button>
+          </div>
+          <div class="cards-grid" id="now-grid">
+            <div class="skeleton card-skeleton"></div>
+            <div class="skeleton card-skeleton"></div>
+          </div>
+        </section>
+
+        <section aria-labelledby="proximas-title">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">A continuación</span>
+              <h2 id="proximas-title">Lo próximo</h2>
+            </div>
+          </div>
+          <div class="timeline-list" id="next-list">
+            <div class="skeleton row-skeleton"></div>
+            <div class="skeleton row-skeleton"></div>
+          </div>
+        </section>
+
+        <section class="quick-grid" aria-label="Accesos rápidos">
+          <button class="quick-card quick-map" type="button" data-go="mapa">
+            <span class="quick-icon" aria-hidden="true">⌖</span>
+            <span><small>Ubicate</small><strong>Mapa del IES</strong></span>
+            <b aria-hidden="true">→</b>
+          </button>
+          <button class="quick-card quick-food" type="button" data-go="menu">
+            <span class="quick-icon" aria-hidden="true">⌁</span>
+            <span><small>Almuerzo</small><strong>Ver el menú</strong></span>
+            <b aria-hidden="true">→</b>
+          </button>
+        </section>
+      </div>
+    </section>
+
+    <section class="view wrap" id="view-cronograma" data-view="cronograma" hidden>
+      <div class="page-heading">
+        <p class="eyebrow">Programa actualizado</p>
+        <h1>Cronograma</h1>
+        <p>Consultá horarios, espacios y propuestas. Los estados se actualizan automáticamente.</p>
+      </div>
+      <div class="filters glass" aria-label="Filtros del cronograma">
+        <div class="segmented" id="day-filter" role="group" aria-label="Día">
+          <button class="active" type="button" data-day="2026-10-01">Jueves 1</button>
+          <button type="button" data-day="2026-10-02">Viernes 2</button>
+          <button type="button" data-day="all">Todo</button>
+        </div>
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <span class="sr-only">Buscar actividad, expositor o espacio</span>
+          <input id="schedule-search" type="search" placeholder="Buscar actividad, expositor o aula…" autocomplete="off">
+        </label>
+        <div class="select-row">
+          <label>
+            <span class="sr-only">Filtrar por estado</span>
+            <select id="status-filter">
+              <option value="all">Todos los estados</option>
+              <option value="live">En curso</option>
+              <option value="upcoming">Próximamente</option>
+              <option value="finished">Finalizadas</option>
+            </select>
+          </label>
+          <label>
+            <span class="sr-only">Filtrar por tipo</span>
+            <select id="type-filter"><option value="all">Todos los tipos</option></select>
+          </label>
+          <label>
+            <span class="sr-only">Filtrar por espacio</span>
+            <select id="space-filter"><option value="all">Todos los espacios</option></select>
+          </label>
+        </div>
+      </div>
+      <div id="schedule-results" class="schedule-results" aria-live="polite"></div>
+    </section>
+
+    <section class="view wrap" id="view-mapa" data-view="mapa" hidden>
+      <div class="page-heading">
+        <p class="eyebrow">IES 9-010 Rosario Vera Peñaloza</p>
+        <h1>Mapa de espacios</h1>
+        <p>Tocá el plano para ampliarlo. Debajo podés consultar qué sucede en cada espacio.</p>
+      </div>
+      <div class="map-layout">
+        <button class="map-frame glass" id="open-map" type="button" aria-label="Ampliar mapa del instituto">
+          <img src="assets/mapa-ies.png" alt="Croquis del IES 9-010 Rosario Vera Peñaloza con aulas y espacios">
+          <span>Ampliar plano</span>
+        </button>
+        <aside class="spaces-panel glass">
+          <div class="panel-heading">
+            <span class="section-kicker live-kicker"><i></i> En vivo</span>
+            <h2>Actividad por espacio</h2>
+          </div>
+          <div id="spaces-list" class="spaces-list"></div>
+        </aside>
+      </div>
+      <div class="map-notes">
+        <article><strong>Ingreso principal</strong><span>Por el sector del Salón de Usos Múltiples (SUM).</span></article>
+        <article><strong>Aula abierta</strong><span>Pasillo oeste, junto a Secretaría, Rectoría y Biblioteca.</span></article>
+        <article><strong>Patio de artesanos</strong><span>Patio contiguo al estacionamiento.</span></article>
+      </div>
+    </section>
+
+    <section class="view wrap" id="view-menu" data-view="menu" hidden>
+      <div class="page-heading food-heading">
+        <p class="eyebrow">Opciones para el almuerzo</p>
+        <h1>Menú</h1>
+        <p>Podés consultar las opciones acá. La elección y la compra se realizan personalmente en el punto indicado por la organización.</p>
+      </div>
+      <div id="menu-status" class="menu-status glass"></div>
+      <div id="menu-grid" class="menu-grid"></div>
+    </section>
+
+    <section class="view wrap" id="view-memorias" data-view="memorias" hidden>
+      <div class="page-heading">
+        <p class="eyebrow">El encuentro que vamos construyendo</p>
+        <h1>Memorias</h1>
+        <p>Las actividades finalizadas aparecerán aquí con sus reseñas, imágenes y materiales disponibles.</p>
+      </div>
+      <div class="memory-grid" id="memory-grid"></div>
+    </section>
+
+    <section class="view wrap" id="view-sponsors" data-view="sponsors" hidden>
+      <div class="page-heading">
+        <p class="eyebrow">Acompañan estas jornadas</p>
+        <h1>Sponsors</h1>
+        <p>Instituciones, organizaciones y proyectos que hacen posible el encuentro.</p>
+      </div>
+      <div class="sponsors-grid glass" id="sponsors-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="footer-title">Organizan los 4 IES del Valle de Uco</p>
+      <div class="institutes" aria-label="Institutos organizadores">
+        <img src="assets/logo-vera.png" alt="IES 9-010 Rosario Vera Peñaloza">
+        <img src="assets/logo-iesvu.png" alt="IES 9-015 Valle de Uco">
+        <img src="assets/logo-toribio.png" alt="IES 9-004 Normal Superior Toribio de Luzuriaga">
+        <img src="assets/logo-tupungato.png" alt="IES 9-009 Tupungato">
+      </div>
+      <p class="footer-copy">15 años, cuatro institutos. Educación Superior que transforma el territorio.</p>
+    </div>
+  </footer>
+
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="active" type="button" data-go="inicio"><span aria-hidden="true">⌂</span><small>Inicio</small></button>
+    <button type="button" data-go="cronograma"><span aria-hidden="true">▤</span><small>Agenda</small></button>
+    <button type="button" data-go="mapa"><span aria-hidden="true">⌖</span><small>Mapa</small></button>
+    <button type="button" data-go="menu"><span aria-hidden="true">⌁</span><small>Menú</small></button>
+    <button type="button" data-go="memorias"><span aria-hidden="true">◫</span><small>Memorias</small></button>
+  </nav>
+
+  <dialog id="activity-dialog" class="modal">
+    <button class="modal-close" type="button" data-close-dialog aria-label="Cerrar">×</button>
+    <div id="activity-detail"></div>
+  </dialog>
+
+  <dialog id="map-dialog" class="modal map-modal">
+    <button class="modal-close" type="button" data-close-map aria-label="Cerrar">×</button>
+    <div class="zoom-map"><img src="assets/mapa-ies.png" alt="Croquis ampliado del IES 9-010 Rosario Vera Peñaloza"></div>
+  </dialog>
+
+  <dialog id="food-popup" class="modal food-popup">
+    <button class="modal-close" type="button" data-close-food aria-label="Cerrar">×</button>
+    <div class="food-popup-icon" aria-hidden="true">⌁</div>
+    <p class="eyebrow">El almuerzo está disponible</p>
+    <h2 id="food-popup-title">Ya podés consultar el menú</h2>
+    <p id="food-popup-message">Mirá las opciones disponibles en la app. Para elegir y comprar, acercate personalmente al punto de venta.</p>
+    <button class="button primary" type="button" data-open-menu>Ver opciones</button>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
