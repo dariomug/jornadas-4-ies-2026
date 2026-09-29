@@ -95,12 +95,16 @@
 
         <section class="quick-grid" aria-label="Accesos rápidos">
           <button class="quick-card quick-map" type="button" data-go="mapa">
-            <span class="quick-icon" aria-hidden="true">⌖</span>
+            <span class="quick-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 10c0 5.3-8 11-8 11s-8-5.7-8-11a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/></svg>
+            </span>
             <span><small>Ubicate</small><strong>Mapa del IES</strong></span>
             <b aria-hidden="true">→</b>
           </button>
           <button class="quick-card quick-food" type="button" data-go="menu">
-            <span class="quick-icon" aria-hidden="true">⌁</span>
+            <span class="quick-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/></svg>
+            </span>
             <span><small>¿Ya tenes hambre?</small><strong>Ver el menú</strong></span>
             <b aria-hidden="true">→</b>
           </button>
@@ -440,7 +444,9 @@
 
   <dialog id="food-popup" class="modal food-popup">
     <button class="modal-close" type="button" data-close-food aria-label="Cerrar">×</button>
-    <div class="food-popup-icon" aria-hidden="true">⌁</div>
+    <div class="food-popup-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/></svg>
+    </div>
     <p class="eyebrow">¡A comer!</p>
     <h2 id="food-popup-title">Ya podés consultar el menú del almuerzo</h2>
     <p id="food-popup-message">Mirá las opciones disponibles en la app. Para elegir y comprar, acercate personalmente al punto de venta.</p>
