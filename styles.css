@@ -147,6 +147,11 @@ img { max-width: 100%; display: block; }
 .host-copy { position: relative; z-index: 1; }
 .host-copy h2 { margin: 7px 0 10px; font-size: clamp(1.75rem,4vw,2.85rem); line-height: 1.04; letter-spacing: -.045em; }
 .host-copy p { max-width: 650px; margin: 0; color: var(--muted); }
+.home-sponsors { padding: clamp(22px,4vw,34px); border-radius: 28px; overflow: hidden; }
+.home-sponsors .section-heading { margin-bottom: 16px; }
+.sponsors-preview { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 10px; }
+.sponsor-mini { min-height: 88px; padding: 12px; border-radius: 15px; }
+.sponsor.sponsor-mini img { width: 100%; max-height: 58px; }
 
 .page-heading { padding: 56px 0 28px; max-width: 780px; }
 .page-heading h1 { font-size: clamp(2.6rem, 7vw, 5rem); }
@@ -302,6 +307,7 @@ img { max-width: 100%; display: block; }
   .map-notes { grid-template-columns: 1fr; }
   .sponsors-grid { grid-template-columns: 1fr 1fr; }
   .host-section { grid-template-columns: minmax(180px,.55fr) minmax(0,1fr); }
+  .sponsors-preview { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 
 @media (max-width: 620px) {
@@ -341,6 +347,9 @@ img { max-width: 100%; display: block; }
   .host-logo-shell { min-height: 150px; padding: 18px; }
   .host-logo-shell img { max-height: 115px; }
   .host-copy h2 { font-size: 1.75rem; }
+  .home-sponsors { padding: 18px; border-radius: 22px; }
+  .sponsors-preview { display: flex; overflow-x: auto; padding-bottom: 5px; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  .sponsor-mini { flex: 0 0 138px; scroll-snap-align: start; }
   .bottom-nav { bottom: max(7px, env(safe-area-inset-bottom)); width: calc(100% - 14px); padding: 5px; border-radius: 21px; }
   .bottom-nav button { min-height: 52px; border-radius: 16px; }
   .nav-icon { width: 20px; height: 20px; }

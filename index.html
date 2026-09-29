@@ -116,6 +116,17 @@
             <p>El Vera recibe a los cuatro institutos del Valle de Uco para compartir dos jornadas de investigación, extensión y encuentro.</p>
           </div>
         </section>
+
+        <section class="home-sponsors glass" aria-labelledby="home-sponsors-title">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker">Acompañan estas jornadas</span>
+              <h2 id="home-sponsors-title">Sponsors</h2>
+            </div>
+            <button class="text-button" type="button" data-go="sponsors">Ver todos</button>
+          </div>
+          <div class="sponsors-preview" id="sponsors-preview"></div>
+        </section>
       </div>
     </section>
 
@@ -230,9 +241,9 @@
                 <text x="82" y="338">INGRESO</text>
               </g>
 
-              <g class="map-space map-corridor-space" data-map-key="aula-abierta" role="button" tabindex="0">
+              <g class="map-space map-corridor-space" data-map-key="espacio-arte-vera" role="button" tabindex="0">
                 <rect x="145" y="420" width="80" height="215" rx="15" />
-                <text transform="translate(180 528) rotate(-90)">Aula abierta</text>
+                <text transform="translate(180 528) rotate(-90)">Espacio de Arte Vera</text>
               </g>
 
               <g class="map-building map-utility">
@@ -314,12 +325,6 @@
                 <rect x="1040" y="590" width="115" height="48" rx="11" /><text x="1097" y="620">Aula 10</text>
               </g>
 
-              <g class="map-space map-outdoor" data-map-key="patio-artesanos" role="button" tabindex="0">
-                <rect x="20" y="590" width="180" height="136" rx="18" />
-                <text x="110" y="642">Patio de</text><text x="110" y="667">artesanos</text>
-                <text class="map-status-text" x="110" y="699">Sin actividad ahora</text>
-              </g>
-
               <g class="map-building map-utility">
                 <rect x="20" y="420" width="105" height="145" rx="13" />
                 <text transform="translate(67 492) rotate(-90)">Estacionamiento</text>
@@ -327,8 +332,21 @@
 
               <g class="map-building map-utility">
                 <rect x="545" y="52" width="610" height="182" rx="20" />
-                <text x="850" y="132">Patio central</text>
-                <text class="map-small" x="850" y="158">Espacio abierto</text>
+                <text class="map-zone-label" x="850" y="66">PATIO CENTRAL</text>
+              </g>
+
+              <g class="map-space map-outdoor" data-map-key="patio-artesanos" role="button" tabindex="0">
+                <rect x="560" y="82" width="280" height="136" rx="17" />
+                <text x="700" y="128">Patio de artesanos</text>
+                <text class="map-subtitle" x="700" y="154">Patio central</text>
+                <text class="map-status-text" x="700" y="187">Sin actividad ahora</text>
+              </g>
+
+              <g class="map-space map-outdoor" data-map-key="aula-abierta" role="button" tabindex="0">
+                <rect x="855" y="82" width="285" height="136" rx="17" />
+                <text x="997" y="128">Aula abierta</text>
+                <text class="map-subtitle" x="997" y="154">Patio central</text>
+                <text class="map-status-text" x="997" y="187">Sin actividad ahora</text>
               </g>
             </svg>
           </div>
@@ -349,8 +367,8 @@
       </div>
       <div class="map-notes">
         <article><strong>Ingreso principal</strong><span>Por el sector del Salón de Usos Múltiples (SUM).</span></article>
-        <article><strong>Aula abierta</strong><span>Pasillo oeste, junto a Secretaría, Rectoría y Biblioteca.</span></article>
-        <article><strong>Patio de artesanos</strong><span>Patio contiguo al estacionamiento.</span></article>
+        <article><strong>Espacio de Arte Vera</strong><span>Pasillo oeste, junto a Secretaría, Rectoría y Biblioteca.</span></article>
+        <article><strong>Patio central</strong><span>Allí funcionan el Aula Abierta y el Patio de Artesanos.</span></article>
       </div>
     </section>
 

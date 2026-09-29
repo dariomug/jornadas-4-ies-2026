@@ -37,7 +37,8 @@ const MAP_SPACES = {
   "aula-musica": { label: "Aula de Música", aliases: ["aula musica", "aula de musica"] },
   "laboratorio": { label: "Laboratorio de Informática", aliases: ["laboratorio", "laboratorio informatica", "laboratorio de informatica"] },
   "biblioteca": { label: "Biblioteca", aliases: ["biblioteca"] },
-  "taller-arte": { label: "Taller de Arte", aliases: ["taller de arte", "espacio de arte vera", "espacio arte vera"] },
+  "taller-arte": { label: "Taller de Arte", aliases: ["taller de arte"] },
+  "espacio-arte-vera": { label: "Espacio de Arte Vera", aliases: ["espacio de arte vera", "espacio arte vera"] },
   "aula-abierta": { label: "Aula abierta", aliases: ["aula abierta"] },
   "patio-artesanos": { label: "Patio de artesanos", aliases: ["patio artesanos", "patio de artesanos"] },
   "corredor-4-8": { label: "Corredor de aulas 4 a 8", aliases: ["corredor aulas 4 a 8", "corredor de aulas 4 a 8", "corredor 4 a 8"] }
@@ -412,14 +413,24 @@ function renderMemories() {
 }
 
 function renderSponsors() {
-  const sponsors = visibleRows(state.data.sponsors);
-  $("#sponsors-grid").innerHTML = sponsors.length ? sponsors.map(item => {
+  const sponsors = visibleRows(state.data.sponsors).sort((a,b) => Number(valueOf(a,"orden") || 999) - Number(valueOf(b,"orden") || 999));
+  const sponsorContent = (item, compact = false) => {
     const name = valueOf(item,"nombre","sponsor","institucion") || "Sponsor";
     const logo = safeUrl(valueOf(item,"logo_url","imagen_url","logo"));
     const link = safeUrl(valueOf(item,"enlace","url","sitio_web"));
     const content = logo ? `<img src="${escapeHtml(logo)}" alt="${escapeHtml(name)}" loading="lazy">` : `<span>${escapeHtml(name)}</span>`;
-    return link ? `<a class="sponsor" href="${escapeHtml(link)}" target="_blank" rel="noopener">${content}</a>` : `<div class="sponsor">${content}</div>`;
-  }).join("") : `<div class="empty-state"><strong>Espacio para sponsors</strong><span>Los logos se mostrarán automáticamente cuando se carguen en la planilla.</span></div>`;
+    const classes = `sponsor${compact ? " sponsor-mini" : ""}`;
+    return link ? `<a class="${classes}" href="${escapeHtml(link)}" target="_blank" rel="noopener" aria-label="Visitar el sitio de ${escapeHtml(name)}">${content}</a>` : `<div class="${classes}">${content}</div>`;
+  };
+  $("#sponsors-grid").innerHTML = sponsors.length
+    ? sponsors.map(item => sponsorContent(item)).join("")
+    : `<div class="empty-state"><strong>Espacio para sponsors</strong><span>Los logos se mostrarán automáticamente cuando se carguen en la planilla.</span></div>`;
+  const preview = $("#sponsors-preview");
+  const previewSection = $(".home-sponsors");
+  if (preview && previewSection) {
+    previewSection.hidden = sponsors.length === 0;
+    preview.innerHTML = sponsors.slice(0, 6).map(item => sponsorContent(item, true)).join("");
+  }
 }
 
 function showActivity(id) {
