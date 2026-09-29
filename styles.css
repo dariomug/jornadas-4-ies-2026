@@ -402,3 +402,19 @@ img { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+.quick-icon svg,
+.food-popup-icon svg,
+.alert-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.food-popup-icon svg { width: 38px; height: 38px; }
+.alert-icon svg { width: 20px; height: 20px; }
+.alert .alert-icon { color: #8a6020; }
