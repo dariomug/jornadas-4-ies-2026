@@ -223,6 +223,10 @@ function renderAlerts() {
     const message = valueOf(alert, "mensaje", "descripcion", "texto");
     const type = normalizeKey(valueOf(alert, "tipo", "categoria"));
     const go = /menu|comida|almuerzo/.test(type) ? "menu" : valueOf(alert, "seccion", "destino");
+    const foodAlert = /menu|comida|almuerzo/.test(type);
+const alertIcon = foodAlert
+  ? `<svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/></svg>`
+  : `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`;
     return `<article class="alert"><span class="alert-icon" aria-hidden="true">${/menu|comida|almuerzo/.test(type) ? "⌁" : "!"}</span><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span></div>${go ? `<button type="button" data-go="${escapeHtml(go)}">Ver más</button>` : ""}</article>`;
   }).join("");
 }
