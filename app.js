@@ -223,10 +223,6 @@ function renderAlerts() {
     const message = valueOf(alert, "mensaje", "descripcion", "texto");
     const type = normalizeKey(valueOf(alert, "tipo", "categoria"));
     const go = /menu|comida|almuerzo/.test(type) ? "menu" : valueOf(alert, "seccion", "destino");
-    const foodAlert = /menu|comida|almuerzo/.test(type);
-const alertIcon = foodAlert
-  ? `<svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/></svg>`
-  : `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`;
     return `<article class="alert"><span class="alert-icon" aria-hidden="true">${/menu|comida|almuerzo/.test(type) ? "⌁" : "!"}</span><div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span></div>${go ? `<button type="button" data-go="${escapeHtml(go)}">Ver más</button>` : ""}</article>`;
   }).join("");
 }
@@ -238,15 +234,16 @@ function getActivities() {
 function activityCard(activity) {
   const id = valueOf(activity, "id") || `activity-${Math.random()}`;
   const status = activityStatus(activity);
+  const featured = isTrue(valueOf(activity, "destacada", "destacado"), false);
   const type = valueOf(activity, "tipo", "categoria") || "Actividad";
   const title = valueOf(activity, "titulo", "actividad") || "Actividad sin título";
   const space = valueOf(activity, "espacio", "aula") || "Espacio a confirmar";
   const institute = valueOf(activity, "instituto", "ies");
   const start = valueOf(activity, "inicio");
   const end = valueOf(activity, "fin");
-  return `<button class="activity-card" type="button" data-activity-id="${escapeHtml(id)}" style="--card-accent:${status === "live" ? "var(--live)" : typeAccent(type)}">
+  return `<button class="activity-card${featured ? " is-featured" : ""}" type="button" data-activity-id="${escapeHtml(id)}" style="--card-accent:${status === "live" ? "var(--live)" : typeAccent(type)}">
     <div class="card-top"><span class="status-badge ${status}">${statusLabel(status)}</span><span class="activity-time">${formatTime(start)}–${formatTime(end)}</span></div>
-    <div><span class="type-badge">${escapeHtml(type)}</span><h3>${escapeHtml(title)}</h3></div>
+    <div><div class="activity-labels"><span class="type-badge">${escapeHtml(type)}</span>${featured ? `<span class="featured-badge">Imperdible</span>` : ""}</div><h3>${escapeHtml(title)}</h3></div>
     <div class="activity-meta"><span><strong>⌖ ${escapeHtml(space)}</strong></span>${institute ? `<span>${escapeHtml(institute)}</span>` : ""}</div>
   </button>`;
 }
@@ -274,7 +271,8 @@ function renderHome() {
     const title = valueOf(item,"titulo","actividad");
     const space = valueOf(item,"espacio","aula") || "A confirmar";
     const day = localDateKey(valueOf(item,"inicio")) === "2026-10-01" ? "Jue" : "Vie";
-    return `<button class="timeline-row" type="button" data-activity-id="${escapeHtml(id)}"><span class="timeline-time">${day} ${formatTime(valueOf(item,"inicio"))}</span><span><strong>${escapeHtml(title)}</strong><small>${escapeHtml(valueOf(item,"tipo","categoria"))}</small></span><span class="timeline-space">${escapeHtml(space)}</span></button>`;
+    const featured = isTrue(valueOf(item,"destacada","destacado"), false);
+    return `<button class="timeline-row${featured ? " is-featured" : ""}" type="button" data-activity-id="${escapeHtml(id)}"><span class="timeline-time">${day} ${formatTime(valueOf(item,"inicio"))}</span><span><strong>${escapeHtml(title)}</strong><small>${escapeHtml(valueOf(item,"tipo","categoria"))}${featured ? `<span class="featured-inline">Imperdible</span>` : ""}</small></span><span class="timeline-space">${escapeHtml(space)}</span></button>`;
   }).join("") : `<div class="empty-state"><strong>No quedan actividades programadas</strong><span>Recorré las memorias del encuentro.</span></div>`;
 }
 
@@ -442,10 +440,11 @@ function showActivity(id) {
   if (!item) return;
   const title = valueOf(item,"titulo","actividad");
   const status = activityStatus(item);
+  const featured = isTrue(valueOf(item,"destacada","destacado"), false);
   const photo = safeUrl(valueOf(item,"foto_url","imagen_url","foto"));
   const materials = safeUrl(valueOf(item,"materiales_url","material_url","enlace"));
   const summary = valueOf(item,"resumen","reseña","memoria");
-  $("#activity-detail").innerHTML = `<div class="detail-header"><span class="status-badge ${status}">${statusLabel(status)}</span><h2>${escapeHtml(title)}</h2><span class="type-badge">${escapeHtml(valueOf(item,"tipo","categoria"))}</span></div>
+  $("#activity-detail").innerHTML = `<div class="detail-header"><div class="activity-labels"><span class="status-badge ${status}">${statusLabel(status)}</span>${featured ? `<span class="featured-badge">Imperdible</span>` : ""}</div><h2>${escapeHtml(title)}</h2><span class="type-badge">${escapeHtml(valueOf(item,"tipo","categoria"))}</span></div>
     <div class="detail-meta"><div><small>Horario</small><strong>${formatTime(valueOf(item,"inicio"))}–${formatTime(valueOf(item,"fin"))}</strong></div><div><small>Espacio</small><strong>${escapeHtml(valueOf(item,"espacio","aula") || "A confirmar")}</strong></div><div><small>Instituto</small><strong>${escapeHtml(valueOf(item,"instituto","ies") || "Organización")}</strong></div><div><small>Responsables</small><strong>${escapeHtml(valueOf(item,"responsables","expositores") || "—")}</strong></div></div>
     ${summary ? `<div class="detail-text"><h3>Resumen</h3><p>${escapeHtml(summary)}</p></div>` : ""}${photo ? `<img class="detail-photo" src="${escapeHtml(photo)}" alt="Registro de ${escapeHtml(title)}">` : ""}${materials ? `<a class="detail-link" href="${escapeHtml(materials)}" target="_blank" rel="noopener">Abrir materiales →</a>` : ""}`;
   $("#activity-dialog").showModal();
