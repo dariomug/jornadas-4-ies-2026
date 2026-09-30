@@ -324,6 +324,8 @@ img { max-width: 100%; display: block; }
 
 .modal { width: min(620px, calc(100% - 28px)); max-height: calc(100vh - 36px); padding: 0; border: 0; border-radius: 28px; color: var(--ink); background: #fbf9fc; box-shadow: 0 30px 100px rgba(24,14,31,.35); overflow: auto; }
 .modal::backdrop { background: rgba(20,13,26,.62); backdrop-filter: blur(7px); }
+.modal.is-dismissing { display: none !important; visibility: hidden !important; opacity: 0 !important; }
+.modal.is-dismissing::backdrop { display: none !important; background: transparent !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .modal-close { position: sticky; z-index: 5; float: right; top: 12px; margin: 12px 12px 0 0; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.4rem; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 #activity-detail { padding: 30px; }
 .detail-header { padding-right: 48px; }

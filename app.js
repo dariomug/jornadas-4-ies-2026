@@ -447,7 +447,9 @@ function showActivity(id) {
   $("#activity-detail").innerHTML = `<div class="detail-header"><div class="activity-labels"><span class="status-badge ${status}">${statusLabel(status)}</span>${featured ? `<span class="featured-badge">Imperdible</span>` : ""}</div><h2>${escapeHtml(title)}</h2><span class="type-badge">${escapeHtml(valueOf(item,"tipo","categoria"))}</span></div>
     <div class="detail-meta"><div><small>Horario</small><strong>${formatTime(valueOf(item,"inicio"))}–${formatTime(valueOf(item,"fin"))}</strong></div><div><small>Espacio</small><strong>${escapeHtml(valueOf(item,"espacio","aula") || "A confirmar")}</strong></div><div><small>Instituto</small><strong>${escapeHtml(valueOf(item,"instituto","ies") || "Organización")}</strong></div><div><small>Responsables</small><strong>${escapeHtml(valueOf(item,"responsables","expositores") || "—")}</strong></div></div>
     ${summary ? `<div class="detail-text"><h3>Resumen</h3><p>${escapeHtml(summary)}</p></div>` : ""}${photo ? `<img class="detail-photo" src="${escapeHtml(photo)}" alt="Registro de ${escapeHtml(title)}">` : ""}${materials ? `<a class="detail-link" href="${escapeHtml(materials)}" target="_blank" rel="noopener">Abrir materiales →</a>` : ""}`;
-  $("#activity-dialog").showModal();
+  const dialog = $("#activity-dialog");
+  dialog.classList.remove("is-dismissing");
+  dialog.showModal();
 }
 
 function showView(name, updateHash = true) {
@@ -477,22 +479,33 @@ function maybeShowFoodPopup() {
       $("#food-popup-title").textContent = valueOf(activeFoodAlert,"titulo","nombre") || "Ya podés consultar el menú";
       $("#food-popup-message").textContent = valueOf(activeFoodAlert,"mensaje","descripcion","texto") || "Mirá las opciones disponibles. Para elegir y comprar, acercate personalmente al punto de venta.";
     }
-    $("#food-popup").showModal();
+    const dialog = $("#food-popup");
+    dialog.classList.remove("is-dismissing");
+    dialog.showModal();
   }
+}
+
+function closeDialogNow(dialog) {
+  if (!dialog?.open) return;
+  // Oculta el contenido y el fondo en el mismo instante del toque. Esto evita
+  // la demora de repintado que algunos navegadores móviles tienen con <dialog>.
+  dialog.classList.add("is-dismissing");
+  dialog.close();
 }
 
 function closeFoodPopup() {
   sessionStorage.setItem("food-popup-dismissed", localDateKey(new Date()));
-  $("#food-popup").close();
+  closeDialogNow($("#food-popup"));
 }
 
 function bindInstantClose(buttonSelector, closeDialog) {
   const button = $(buttonSelector);
   let lastPointerClose = 0;
 
-  // En pantallas táctiles, pointerup se dispara sin esperar al click sintético.
-  button.addEventListener("pointerup", event => {
+  // Se ejecuta al apoyar el dedo, incluso si el panel tenía desplazamiento.
+  button.addEventListener("pointerdown", event => {
     event.preventDefault();
+    event.stopPropagation();
     lastPointerClose = performance.now();
     closeDialog();
   });
@@ -549,7 +562,7 @@ document.addEventListener("keydown", event => {
 
 $("#refresh-button").addEventListener("click", () => loadData({ manual: true }));
 
-bindInstantClose("[data-close-dialog]", () => $("#activity-dialog").close());
+bindInstantClose("[data-close-dialog]", () => closeDialogNow($("#activity-dialog")));
 bindInstantClose("[data-close-food]", closeFoodPopup);
 
 $("#schedule-search").addEventListener("input", event => { state.query = event.target.value; renderSchedule(); });
@@ -559,7 +572,7 @@ $("#space-filter").addEventListener("change", event => { state.space = event.tar
 
 [$("#activity-dialog"), $("#food-popup")].forEach(dialog => dialog.addEventListener("click", event => {
   if (event.target === dialog) {
-    if (dialog.id === "food-popup") closeFoodPopup(); else dialog.close();
+    if (dialog.id === "food-popup") closeFoodPopup(); else closeDialogNow(dialog);
   }
 }));
 
