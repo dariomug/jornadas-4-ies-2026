@@ -156,6 +156,7 @@ img { max-width: 100%; display: block; }
 .quick-map { background: linear-gradient(135deg, rgba(23,75,136,.94), rgba(65,123,192,.78)); }
 .quick-food { background: linear-gradient(135deg, rgba(176,106,22,.94), rgba(239,174,53,.8)); }
 .quick-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 17px; background: rgba(255,255,255,.16); font-size: 1.7rem; }
+.quick-icon svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .quick-card small, .quick-card strong { display: block; }
 .quick-card small { opacity: .8; }
 .quick-card strong { font-size: 1.25rem; }
