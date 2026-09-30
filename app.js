@@ -486,6 +486,25 @@ function closeFoodPopup() {
   $("#food-popup").close();
 }
 
+function bindInstantClose(buttonSelector, closeDialog) {
+  const button = $(buttonSelector);
+  let lastPointerClose = 0;
+
+  // En pantallas táctiles, pointerup se dispara sin esperar al click sintético.
+  button.addEventListener("pointerup", event => {
+    event.preventDefault();
+    lastPointerClose = performance.now();
+    closeDialog();
+  });
+
+  // Conserva el cierre por teclado y funciona como respaldo en navegadores antiguos.
+  button.addEventListener("click", event => {
+    event.stopPropagation();
+    if (performance.now() - lastPointerClose < 700) return;
+    closeDialog();
+  });
+}
+
 let toastTimer;
 function showToast(message) {
   const toast = $("#toast");
@@ -500,8 +519,6 @@ document.addEventListener("click", event => {
   if (go) showView(go.dataset.go);
   const activity = event.target.closest("[data-activity-id]");
   if (activity) showActivity(activity.dataset.activityId);
-  if (event.target.closest("[data-close-dialog]")) $("#activity-dialog").close();
-  if (event.target.closest("[data-close-food]")) closeFoodPopup();
   if (event.target.closest("[data-open-menu]")) { closeFoodPopup(); showView("menu"); }
   if (event.target.closest("[data-retry]")) loadData();
   const dayButton = event.target.closest("[data-day]");
@@ -531,6 +548,9 @@ document.addEventListener("keydown", event => {
 });
 
 $("#refresh-button").addEventListener("click", () => loadData({ manual: true }));
+
+bindInstantClose("[data-close-dialog]", () => $("#activity-dialog").close());
+bindInstantClose("[data-close-food]", closeFoodPopup);
 
 $("#schedule-search").addEventListener("input", event => { state.query = event.target.value; renderSchedule(); });
 $("#status-filter").addEventListener("change", event => { state.status = event.target.value; renderSchedule(); });

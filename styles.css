@@ -324,7 +324,7 @@ img { max-width: 100%; display: block; }
 
 .modal { width: min(620px, calc(100% - 28px)); max-height: calc(100vh - 36px); padding: 0; border: 0; border-radius: 28px; color: var(--ink); background: #fbf9fc; box-shadow: 0 30px 100px rgba(24,14,31,.35); overflow: auto; }
 .modal::backdrop { background: rgba(20,13,26,.62); backdrop-filter: blur(7px); }
-.modal-close { position: sticky; z-index: 5; float: right; top: 12px; margin: 12px 12px 0 0; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.4rem; cursor: pointer; }
+.modal-close { position: sticky; z-index: 5; float: right; top: 12px; margin: 12px 12px 0 0; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.4rem; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 #activity-detail { padding: 30px; }
 .detail-header { padding-right: 48px; }
 .detail-header h2 { margin: 10px 0 12px; font-size: clamp(1.6rem,5vw,2.4rem); letter-spacing: -.04em; line-height: 1.08; }
@@ -347,6 +347,7 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 840px) {
+  .modal::backdrop { background: rgba(20,13,26,.7); backdrop-filter: none; -webkit-backdrop-filter: none; }
   .hero { grid-template-columns: 1fr; align-items: start; }
   .event-card { min-height: 150px; }
   .cards-grid, .time-group-cards, .quick-grid, .menu-grid, .memory-grid { grid-template-columns: 1fr 1fr; }
