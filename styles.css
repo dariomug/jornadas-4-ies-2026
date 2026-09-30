@@ -337,6 +337,14 @@ img { max-width: 100%; display: block; }
 .detail-text { color: var(--muted); }
 .detail-photo { width: 100%; border-radius: 17px; margin-top: 18px; }
 .detail-link { display: inline-flex; margin-top: 16px; color: var(--purple); font-weight: 850; }
+.detail-share { display: grid; gap: 16px; margin-top: 26px; padding: 18px; border: 1px solid rgba(255,255,255,.9); border-radius: 20px; background: linear-gradient(145deg,rgba(105,55,145,.12),rgba(255,255,255,.76)); box-shadow: inset 0 1px 0 #fff; }
+.detail-share > div:first-child { display: grid; gap: 4px; }
+.detail-share small { color: var(--muted); line-height: 1.45; }
+.detail-share-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.share-story-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; color: #fff; background: linear-gradient(135deg,#7442a0,#4d2375); box-shadow: 0 12px 26px rgba(77,35,117,.24), inset 0 1px 0 rgba(255,255,255,.32); }
+.share-story-button svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.share-story-button:disabled { cursor: wait; opacity: .68; }
+.download-story-button { padding: 8px 4px; }
 .food-popup { max-width: 460px; padding: 34px; text-align: center; }
 .food-popup-icon { width: 72px; height: 72px; margin: 10px auto 20px; display: grid; place-items: center; border-radius: 23px; color: #fff; background: linear-gradient(145deg,#b66f17,var(--gold)); font-size: 2.3rem; }
 .food-popup h2 { margin: 0; font-size: 2rem; letter-spacing: -.04em; }

@@ -20,6 +20,11 @@ const state = {
   selectedMapSpace: "sum"
 };
 
+const storyState = {
+  activityId: "",
+  file: null
+};
+
 const MAP_SPACES = {
   "sum": { label: "SUM", aliases: ["sum", "salon de usos multiples"] },
   "aula-1": { label: "Aula 1", aliases: ["aula 1"] },
@@ -87,6 +92,17 @@ function safeUrl(value) {
 function formatTime(value) {
   const date = parseDate(value);
   return date ? new Intl.DateTimeFormat("es-AR", { timeZone: "America/Argentina/Buenos_Aires", hour: "2-digit", minute: "2-digit", hour12: false }).format(date) : "—";
+}
+
+function formatStoryDay(value) {
+  const date = parseDate(value);
+  if (!date) return "FECHA A CONFIRMAR";
+  return new Intl.DateTimeFormat("es-AR", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  }).format(date).toLocaleUpperCase("es-AR");
 }
 
 function localDateKey(value) {
@@ -435,6 +451,230 @@ function renderSponsors() {
   }
 }
 
+function canvasRoundRect(context, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + r, y);
+  context.arcTo(x + width, y, x + width, y + height, r);
+  context.arcTo(x + width, y + height, x, y + height, r);
+  context.arcTo(x, y + height, x, y, r);
+  context.arcTo(x, y, x + width, y, r);
+  context.closePath();
+}
+
+function canvasTextLines(context, text, maxWidth, maxLines = 5) {
+  const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (context.measureText(test).width <= maxWidth || !line) {
+      line = test;
+    } else {
+      lines.push(line);
+      line = word;
+      if (lines.length === maxLines - 1) break;
+    }
+  }
+  if (line && lines.length < maxLines) lines.push(line);
+  const usedWords = lines.join(" ").split(/\s+/).filter(Boolean).length;
+  if (usedWords < words.length && lines.length) {
+    const last = lines.length - 1;
+    while (context.measureText(`${lines[last]}…`).width > maxWidth && lines[last].includes(" ")) {
+      lines[last] = lines[last].replace(/\s+\S+$/, "");
+    }
+    lines[last] = `${lines[last]}…`;
+  }
+  return lines;
+}
+
+function drawCanvasLines(context, lines, x, y, lineHeight) {
+  lines.forEach((line, index) => context.fillText(line, x, y + index * lineHeight));
+  return y + lines.length * lineHeight;
+}
+
+function loadCanvasImage(source) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = source;
+  });
+}
+
+async function createActivityStory(item) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const context = canvas.getContext("2d");
+  const title = valueOf(item, "titulo", "actividad") || "Actividad de las Jornadas";
+  const type = valueOf(item, "tipo", "categoria") || "Actividad";
+  const space = valueOf(item, "espacio", "aula") || "Espacio a confirmar";
+  const institute = valueOf(item, "instituto", "ies") || "Organización Jornadas 4 IES";
+  const speakers = valueOf(item, "responsables", "expositores") || "";
+  const start = valueOf(item, "inicio", "fecha_inicio");
+  const end = valueOf(item, "fin", "fecha_fin");
+
+  const background = context.createLinearGradient(0, 0, 1080, 1920);
+  background.addColorStop(0, "#2d173e");
+  background.addColorStop(.52, "#5b2f7d");
+  background.addColorStop(1, "#30203c");
+  context.fillStyle = background;
+  context.fillRect(0, 0, 1080, 1920);
+
+  context.globalAlpha = .22;
+  context.fillStyle = "#c6dc45";
+  context.beginPath();
+  context.arc(930, 250, 300, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = "#87b9ff";
+  context.beginPath();
+  context.arc(90, 1700, 360, 0, Math.PI * 2);
+  context.fill();
+  context.globalAlpha = 1;
+
+  context.fillStyle = "rgba(255,255,255,.12)";
+  canvasRoundRect(context, 60, 60, 960, 1800, 62);
+  context.fill();
+  context.strokeStyle = "rgba(255,255,255,.42)";
+  context.lineWidth = 3;
+  context.stroke();
+
+  const logo = await loadCanvasImage("assets/logo-jornadas.png");
+  context.fillStyle = "rgba(255,255,255,.96)";
+  canvasRoundRect(context, 105, 105, 510, 278, 34);
+  context.fill();
+  const logoRatio = Math.min(450 / logo.width, 225 / logo.height);
+  const logoWidth = logo.width * logoRatio;
+  const logoHeight = logo.height * logoRatio;
+  context.drawImage(logo, 105 + (510 - logoWidth) / 2, 105 + (278 - logoHeight) / 2, logoWidth, logoHeight);
+
+  context.fillStyle = "#ffffff";
+  context.font = "900 42px Arial, sans-serif";
+  context.fillText("XV JORNADAS", 665, 175);
+  context.font = "700 27px Arial, sans-serif";
+  context.fillStyle = "rgba(255,255,255,.78)";
+  context.fillText("1 Y 2 DE OCTUBRE", 665, 225);
+  context.fillText("VALLE DE UCO · 2026", 665, 270);
+
+  context.fillStyle = "#c6dc45";
+  canvasRoundRect(context, 105, 450, Math.min(650, Math.max(260, type.length * 27 + 90)), 76, 38);
+  context.fill();
+  context.fillStyle = "#2e193e";
+  context.font = "900 29px Arial, sans-serif";
+  context.fillText(String(type).toLocaleUpperCase("es-AR"), 145, 500);
+
+  context.fillStyle = "#ffffff";
+  context.font = "900 70px Arial, sans-serif";
+  const titleLines = canvasTextLines(context, title, 870, 6);
+  const titleBottom = drawCanvasLines(context, titleLines, 105, 640, 82);
+
+  const informationTop = Math.max(1135, titleBottom + 70);
+  context.fillStyle = "rgba(255,255,255,.14)";
+  canvasRoundRect(context, 105, informationTop, 870, 310, 42);
+  context.fill();
+  context.strokeStyle = "rgba(255,255,255,.24)";
+  context.lineWidth = 2;
+  context.stroke();
+
+  context.fillStyle = "#c6dc45";
+  context.font = "900 27px Arial, sans-serif";
+  context.fillText(formatStoryDay(start), 155, informationTop + 65);
+  context.fillStyle = "#ffffff";
+  context.font = "900 52px Arial, sans-serif";
+  context.fillText(`${formatTime(start)}–${formatTime(end)} h`, 155, informationTop + 132);
+  context.font = "800 36px Arial, sans-serif";
+  context.fillText(`UBICACIÓN · ${space}`, 155, informationTop + 202);
+  context.fillStyle = "rgba(255,255,255,.76)";
+  context.font = "700 28px Arial, sans-serif";
+  drawCanvasLines(context, canvasTextLines(context, institute, 770, 2), 155, informationTop + 258, 36);
+
+  if (speakers) {
+    context.fillStyle = "rgba(255,255,255,.68)";
+    context.font = "700 25px Arial, sans-serif";
+    context.fillText("RESPONSABLES", 105, 1588);
+    context.fillStyle = "#ffffff";
+    context.font = "700 31px Arial, sans-serif";
+    drawCanvasLines(context, canvasTextLines(context, speakers, 870, 3), 105, 1636, 40);
+  }
+
+  context.fillStyle = "rgba(255,255,255,.84)";
+  context.font = "800 30px Arial, sans-serif";
+  context.fillText("Consultá la agenda en vivo", 105, 1788);
+  context.fillStyle = "#c6dc45";
+  context.font = "900 34px Arial, sans-serif";
+  context.fillText("4ies.elvera9010.edu.ar", 105, 1834);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("No se pudo crear la imagen")), "image/png");
+  });
+}
+
+function storyFilename(item) {
+  const title = String(valueOf(item, "titulo", "actividad") || "actividad")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  return `jornadas-4-ies-${title || "actividad"}.png`;
+}
+
+async function prepareActivityStory(item) {
+  const activityId = String(valueOf(item, "id"));
+  storyState.activityId = activityId;
+  storyState.file = null;
+  try {
+    const blob = await createActivityStory(item);
+    if (storyState.activityId !== activityId) return;
+    storyState.file = new File([blob], storyFilename(item), { type: "image/png" });
+    const button = $("[data-share-activity]");
+    if (button) {
+      button.disabled = false;
+      button.querySelector("span").textContent = "Compartir actividad";
+    }
+    const downloadButton = $("[data-download-story]");
+    if (downloadButton) downloadButton.hidden = false;
+  } catch (error) {
+    console.error(error);
+    const button = $("[data-share-activity]");
+    if (button) button.querySelector("span").textContent = "No se pudo crear la placa";
+  }
+}
+
+function downloadActivityStory() {
+  if (!storyState.file) return;
+  const url = URL.createObjectURL(storyState.file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = storyState.file.name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 3000);
+  showToast("Placa lista para guardar o publicar");
+}
+
+function shareActivityStory() {
+  const file = storyState.file;
+  if (!file) {
+    showToast("La placa todavía se está preparando");
+    return;
+  }
+  const shareData = {
+    files: [file],
+    title: "Jornadas de los 4 IES",
+    text: "Esta actividad forma parte de las XV Jornadas de Investigación y Extensión de los 4 IES."
+  };
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    navigator.share(shareData).catch(error => {
+      if (error?.name !== "AbortError") {
+        console.error(error);
+        downloadActivityStory();
+      }
+    });
+  } else {
+    downloadActivityStory();
+  }
+}
+
 function showActivity(id) {
   const item = getActivities().find(activity => String(valueOf(activity,"id")) === String(id));
   if (!item) return;
@@ -446,10 +686,12 @@ function showActivity(id) {
   const summary = valueOf(item,"resumen","reseña","memoria");
   $("#activity-detail").innerHTML = `<div class="detail-header"><div class="activity-labels"><span class="status-badge ${status}">${statusLabel(status)}</span>${featured ? `<span class="featured-badge">Imperdible</span>` : ""}</div><h2>${escapeHtml(title)}</h2><span class="type-badge">${escapeHtml(valueOf(item,"tipo","categoria"))}</span></div>
     <div class="detail-meta"><div><small>Horario</small><strong>${formatTime(valueOf(item,"inicio"))}–${formatTime(valueOf(item,"fin"))}</strong></div><div><small>Espacio</small><strong>${escapeHtml(valueOf(item,"espacio","aula") || "A confirmar")}</strong></div><div><small>Instituto</small><strong>${escapeHtml(valueOf(item,"instituto","ies") || "Organización")}</strong></div><div><small>Responsables</small><strong>${escapeHtml(valueOf(item,"responsables","expositores") || "—")}</strong></div></div>
-    ${summary ? `<div class="detail-text"><h3>Resumen</h3><p>${escapeHtml(summary)}</p></div>` : ""}${photo ? `<img class="detail-photo" src="${escapeHtml(photo)}" alt="Registro de ${escapeHtml(title)}">` : ""}${materials ? `<a class="detail-link" href="${escapeHtml(materials)}" target="_blank" rel="noopener">Abrir materiales →</a>` : ""}`;
+    ${summary ? `<div class="detail-text"><h3>Resumen</h3><p>${escapeHtml(summary)}</p></div>` : ""}${photo ? `<img class="detail-photo" src="${escapeHtml(photo)}" alt="Registro de ${escapeHtml(title)}">` : ""}${materials ? `<a class="detail-link" href="${escapeHtml(materials)}" target="_blank" rel="noopener">Abrir materiales →</a>` : ""}
+    <div class="detail-share"><div><strong>Compartí esta actividad</strong><small>Generamos una placa vertical lista para historias y redes.</small></div><div class="detail-share-actions"><button class="button share-story-button" type="button" data-share-activity disabled aria-label="Compartir esta actividad"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg><span>Preparando placa…</span></button><button class="text-button download-story-button" type="button" data-download-story hidden>Descargar imagen</button></div></div>`;
   const dialog = $("#activity-dialog");
   dialog.classList.remove("is-dismissing");
   dialog.showModal();
+  prepareActivityStory(item);
 }
 
 function showView(name, updateHash = true) {
@@ -528,6 +770,14 @@ function showToast(message) {
 }
 
 document.addEventListener("click", event => {
+  if (event.target.closest("[data-share-activity]")) {
+    shareActivityStory();
+    return;
+  }
+  if (event.target.closest("[data-download-story]")) {
+    downloadActivityStory();
+    return;
+  }
   const go = event.target.closest("[data-go]");
   if (go) showView(go.dataset.go);
   const activity = event.target.closest("[data-activity-id]");
