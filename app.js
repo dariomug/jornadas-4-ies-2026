@@ -194,6 +194,19 @@ function readCache() {
   try { return JSON.parse(localStorage.getItem(CACHE_KEY)); } catch { return null; }
 }
 
+function restoreCachedData() {
+  const cached = readCache();
+  if (!cached?.data) return false;
+  state.data = { ...state.data, ...cached.data };
+  state.lastUpdated = new Date(cached.savedAt || Date.now());
+  state.hasLoaded = true;
+  populateFilters();
+  renderAll();
+  setConnectionStatus("loading", "Actualizando…", state.lastUpdated);
+  maybeShowFoodPopup();
+  return true;
+}
+
 function renderLoadError(error) {
   const html = `<div class="empty-state error-state"><strong>No pudimos cargar la programación</strong><span>Revisá la conexión e intentá nuevamente.</span><br><button class="button secondary" type="button" data-retry>Reintentar</button></div>`;
   $("#now-grid").innerHTML = html;
@@ -909,6 +922,7 @@ function scheduleNextRefresh() {
 }
 
 showView(location.hash.slice(1) || "inicio", false);
+restoreCachedData();
 loadData().finally(scheduleNextRefresh);
 setInterval(() => { renderAll(); }, 60000);
 
