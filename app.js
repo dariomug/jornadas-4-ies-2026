@@ -242,29 +242,66 @@ function renderEventStatus() {
 
 function renderAlerts() {
   const now = new Date();
+
   const alerts = visibleRows(state.data.avisos).filter(alert => {
-    const start = parseDate(valueOf(alert, "inicio", "desde", "fecha_inicio"));
-    const end = parseDate(valueOf(alert, "fin", "hasta", "fecha_fin"));
+    const start = parseDate(
+      valueOf(alert, "inicio", "desde", "fecha_inicio")
+    );
+
+    const end = parseDate(
+      valueOf(alert, "fin", "hasta", "fecha_fin")
+    );
+
     return (!start || now >= start) && (!end || now <= end);
   });
+
   $("#alerts-home").innerHTML = alerts.map(alert => {
-    const title = valueOf(alert, "titulo", "nombre") || "Aviso importante";
-    const message = valueOf(alert, "mensaje", "descripcion", "texto");
-    const type = normalizeKey(valueOf(alert, "tipo", "categoria"));
-    const go = /menu|comida|almuerzo/.test(type) ? "menu" : valueOf(alert, "seccion", "destino");
+    const title =
+      valueOf(alert, "titulo", "nombre") || "Aviso importante";
+
+    const message =
+      valueOf(alert, "mensaje", "descripcion", "texto");
+
+    const type =
+      normalizeKey(valueOf(alert, "tipo", "categoria"));
+
+    const go = /menu|comida|almuerzo/.test(type)
+      ? "menu"
+      : valueOf(alert, "seccion", "destino");
+
     const alertIcon = /menu|comida|almuerzo/.test(type)
-  ? `<svg viewBox="0 0 24 24" aria-hidden="true">
-       <path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/>
-     </svg>`
-  : `<svg viewBox="0 0 24 24" aria-hidden="true">
-       <path d="M9 18h6M10 21h4"/>
-       <path d="M8.2 14.5A6 6 0 1 1 15.8 14.5C14.7 15.3 14 16.3 14 17h-4c0-.7-.7-1.7-1.8-2.5Z"/>
-       <path d="M12 2V1M4.9 4.9l-.7-.7M19.1 4.9l.7-.7M3 12H2M22 12h-1"/>
-     </svg>`;
+      ? `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3v7M4.5 3v4.5A2.5 2.5 0 0 0 7 10v11M9.5 3v4.5A2.5 2.5 0 0 1 7 10M16 3v18M16 3c3 1.7 4 4.4 4 7.5h-4"/>
+        </svg>
+      `
+      : `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 18h6M10 21h4"/>
+          <path d="M8.2 14.5A6 6 0 1 1 15.8 14.5C14.7 15.3 14 16.3 14 17h-4c0-.7-.7-1.7-1.8-2.5Z"/>
+          <path d="M12 2V1M4.9 4.9l-.7-.7M19.1 4.9l.7-.7M3 12H2M22 12h-1"/>
+        </svg>
+      `;
 
-return `<article class="alert"><span class="alert-icon" aria-hidden="true">${alertIcon}</span>
+    return `
+      <article class="alert">
+        <span class="alert-icon" aria-hidden="true">
+          ${alertIcon}
+        </span>
+
+        <div>
+          <strong>${escapeHtml(title)}</strong>
+          <span>${escapeHtml(message)}</span>
+        </div>
+
+        ${go
+          ? `<button type="button" data-go="${escapeHtml(go)}">Ver más</button>`
+          : ""
+        }
+      </article>
+    `;
+  }).join("");
 }
-
 function getActivities() {
   return visibleRows(state.data.actividades).sort((a,b) => (parseDate(valueOf(a,"inicio")) || 0) - (parseDate(valueOf(b,"inicio")) || 0));
 }
