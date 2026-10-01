@@ -540,7 +540,10 @@ async function createActivityStory(item) {
   context.lineWidth = 3;
   context.stroke();
 
-  const logo = await loadCanvasImage("assets/logo-jornadas.png");
+  const [logo, veraLogo] = await Promise.all([
+    loadCanvasImage("assets/logo-jornadas.png"),
+    loadCanvasImage("assets/logo-vera.png")
+  ]);
   context.fillStyle = "rgba(255,255,255,.96)";
   canvasRoundRect(context, 105, 105, 510, 278, 34);
   context.fill();
@@ -604,6 +607,25 @@ async function createActivityStory(item) {
   context.fillStyle = "#c6dc45";
   context.font = "900 34px Arial, sans-serif";
   context.fillText("4ies.elvera9010.edu.ar", 105, 1834);
+
+  context.fillStyle = "rgba(255,255,255,.96)";
+  canvasRoundRect(context, 850, 1720, 120, 120, 28);
+  context.fill();
+  const veraRatio = Math.min(102 / veraLogo.width, 102 / veraLogo.height);
+  const veraWidth = veraLogo.width * veraRatio;
+  const veraHeight = veraLogo.height * veraRatio;
+  context.drawImage(veraLogo, 850 + (120 - veraWidth) / 2, 1720 + (120 - veraHeight) / 2, veraWidth, veraHeight);
+
+  context.textAlign = "right";
+  context.fillStyle = "rgba(255,255,255,.68)";
+  context.font = "800 20px Arial, sans-serif";
+  context.fillText("APP DISEÑADA POR", 825, 1748);
+  context.fillStyle = "#ffffff";
+  context.font = "900 24px Arial, sans-serif";
+  context.fillText("POLÍTICAS DIGITALES", 825, 1785);
+  context.font = "800 22px Arial, sans-serif";
+  context.fillText("IES VERA PEÑALOZA", 825, 1820);
+  context.textAlign = "left";
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("No se pudo crear la imagen")), "image/png");
