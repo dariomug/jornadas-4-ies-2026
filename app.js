@@ -195,9 +195,7 @@ async function loadFallbackData() {
   if (state.hasLoaded) return false;
 
   try {
-    const response = await fetch(FALLBACK_URL, {
-      cache: "no-store"
-    });
+    const response = await fetch(FALLBACK_URL);
 
     if (!response.ok) {
       throw new Error(`Respaldo ${response.status}`);
@@ -1022,13 +1020,17 @@ function scheduleNextRefresh() {
 
 showView(location.hash.slice(1) || "inicio", false);
 
-const cacheRestaurada = restoreCachedData();
+async function startDataLayer() {
+  const cacheRestaurada = restoreCachedData();
 
-if (!cacheRestaurada) {
-  loadFallbackData();
+  if (!cacheRestaurada) {
+    await loadFallbackData();
+  }
+
+  loadData().finally(scheduleNextRefresh);
 }
 
-loadData().finally(scheduleNextRefresh);
+startDataLayer();
 setInterval(() => { renderAll(); }, 60000);
 
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(console.error));
