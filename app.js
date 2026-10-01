@@ -762,6 +762,28 @@ function closeFoodPopup() {
   closeDialogNow($("#food-popup"));
 }
 
+let closingFeedbackTimer;
+function showClosingFeedback(button) {
+  let feedback = $("#closing-feedback");
+  if (!feedback) {
+    feedback = document.createElement("div");
+    feedback.id = "closing-feedback";
+    feedback.className = "closing-feedback";
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
+    feedback.innerHTML = `<span aria-hidden="true"></span>Cerrando…`;
+    document.body.appendChild(feedback);
+  }
+  const rect = button.getBoundingClientRect();
+  feedback.style.top = `${Math.min(window.innerHeight - 64, rect.bottom + 10)}px`;
+  feedback.style.right = `${Math.max(12, window.innerWidth - rect.right)}px`;
+  feedback.classList.remove("show");
+  void feedback.offsetWidth;
+  feedback.classList.add("show");
+  clearTimeout(closingFeedbackTimer);
+  closingFeedbackTimer = window.setTimeout(() => feedback.classList.remove("show"), 2400);
+}
+
 function bindInstantClose(buttonSelector, closeDialog) {
   const button = $(buttonSelector);
   let lastPointerClose = 0;
@@ -771,14 +793,16 @@ function bindInstantClose(buttonSelector, closeDialog) {
     event.preventDefault();
     event.stopPropagation();
     lastPointerClose = performance.now();
-    closeDialog();
+    showClosingFeedback(button);
+    window.requestAnimationFrame(closeDialog);
   });
 
   // Conserva el cierre por teclado y funciona como respaldo en navegadores antiguos.
   button.addEventListener("click", event => {
     event.stopPropagation();
     if (performance.now() - lastPointerClose < 700) return;
-    closeDialog();
+    showClosingFeedback(button);
+    window.requestAnimationFrame(closeDialog);
   });
 }
 
