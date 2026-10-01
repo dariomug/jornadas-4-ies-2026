@@ -6,6 +6,7 @@ const EVENT_END = new Date("2026-10-02T22:00:00-03:00");
 const MENU_POPUP_START = new Date("2026-10-02T11:30:00-03:00");
 const MENU_POPUP_END = new Date("2026-10-02T15:00:00-03:00");
 const CACHE_KEY = "jornadas4ies:data:v1";
+const FALLBACK_URL = "./data.json";
 
 const state = {
   data: { actividades: [], espacios: [], avisos: [], menu: [], sponsors: [], institutos: [], configuracion: [] },
@@ -188,6 +189,58 @@ async function loadData({ manual = false } = {}) {
   populateFilters();
   renderAll();
   maybeShowFoodPopup();
+}
+
+async function loadFallbackData() {
+  if (state.hasLoaded) return false;
+
+  try {
+    const response = await fetch(FALLBACK_URL, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Respaldo ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (
+      state.hasLoaded ||
+      !data ||
+      data.ok === false ||
+      !Array.isArray(data.actividades) ||
+      data.actividades.length === 0
+    ) {
+      return false;
+    }
+
+    state.data = {
+      ...state.data,
+      ...data
+    };
+
+    state.lastUpdated =
+      parseDate(data.generado_en) ||
+      new Date();
+
+    state.hasLoaded = true;
+
+    populateFilters();
+    renderAll();
+
+    setConnectionStatus(
+      "loading",
+      "Actualizando datos…",
+      state.lastUpdated
+    );
+
+    return true;
+
+  } catch (error) {
+    console.warn("No se pudo cargar el respaldo local:", error);
+    return false;
+  }
 }
 
 function readCache() {
@@ -968,7 +1021,13 @@ function scheduleNextRefresh() {
 }
 
 showView(location.hash.slice(1) || "inicio", false);
-restoreCachedData();
+
+const cacheRestaurada = restoreCachedData();
+
+if (!cacheRestaurada) {
+  loadFallbackData();
+}
+
 loadData().finally(scheduleNextRefresh);
 setInterval(() => { renderAll(); }, 60000);
 
