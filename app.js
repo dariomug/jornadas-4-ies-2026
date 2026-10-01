@@ -601,31 +601,42 @@ async function createActivityStory(item) {
     drawCanvasLines(context, canvasTextLines(context, speakers, 870, 3), 105, 1636, 40);
   }
 
-  context.fillStyle = "rgba(255,255,255,.84)";
-  context.font = "800 30px Arial, sans-serif";
-  context.fillText("Consultá la agenda en vivo", 105, 1788);
+  context.fillStyle = "rgba(30,17,40,.24)";
+  canvasRoundRect(context, 105, 1735, 870, 112, 30);
+  context.fill();
+  context.strokeStyle = "rgba(255,255,255,.2)";
+  context.lineWidth = 2;
+  context.stroke();
+
+  context.fillStyle = "rgba(255,255,255,.78)";
+  context.font = "800 20px Arial, sans-serif";
+  context.fillText("CONSULTÁ LA AGENDA EN VIVO", 135, 1777);
   context.fillStyle = "#c6dc45";
-  context.font = "900 34px Arial, sans-serif";
-  context.fillText("4ies.elvera9010.edu.ar", 105, 1834);
+  context.font = "900 27px Arial, sans-serif";
+  context.fillText("4ies.elvera9010.edu.ar", 135, 1819);
+
+  context.strokeStyle = "rgba(255,255,255,.2)";
+  context.beginPath();
+  context.moveTo(505, 1756);
+  context.lineTo(505, 1826);
+  context.stroke();
+
+  context.fillStyle = "rgba(255,255,255,.62)";
+  context.font = "800 15px Arial, sans-serif";
+  context.fillText("APP DISEÑADA POR", 535, 1768);
+  context.fillStyle = "#ffffff";
+  context.font = "900 18px Arial, sans-serif";
+  context.fillText("POLÍTICAS DIGITALES", 535, 1799);
+  context.font = "800 16px Arial, sans-serif";
+  context.fillText("IES VERA PEÑALOZA", 535, 1827);
 
   context.fillStyle = "rgba(255,255,255,.96)";
-  canvasRoundRect(context, 850, 1720, 120, 120, 28);
+  canvasRoundRect(context, 875, 1751, 78, 78, 20);
   context.fill();
-  const veraRatio = Math.min(102 / veraLogo.width, 102 / veraLogo.height);
+  const veraRatio = Math.min(66 / veraLogo.width, 66 / veraLogo.height);
   const veraWidth = veraLogo.width * veraRatio;
   const veraHeight = veraLogo.height * veraRatio;
-  context.drawImage(veraLogo, 850 + (120 - veraWidth) / 2, 1720 + (120 - veraHeight) / 2, veraWidth, veraHeight);
-
-  context.textAlign = "right";
-  context.fillStyle = "rgba(255,255,255,.68)";
-  context.font = "800 20px Arial, sans-serif";
-  context.fillText("APP DISEÑADA POR", 825, 1748);
-  context.fillStyle = "#ffffff";
-  context.font = "900 24px Arial, sans-serif";
-  context.fillText("POLÍTICAS DIGITALES", 825, 1785);
-  context.font = "800 22px Arial, sans-serif";
-  context.fillText("IES VERA PEÑALOZA", 825, 1820);
-  context.textAlign = "left";
+  context.drawImage(veraLogo, 875 + (78 - veraWidth) / 2, 1751 + (78 - veraHeight) / 2, veraWidth, veraHeight);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("No se pudo crear la imagen")), "image/png");
