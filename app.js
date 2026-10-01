@@ -542,7 +542,7 @@ async function createActivityStory(item) {
 
   const [logo, veraLogo] = await Promise.all([
     loadCanvasImage("assets/logo-jornadas.png"),
-    loadCanvasImage("assets/logo-vera.png")
+    loadCanvasImage("assets/logovera-color.png")
   ]);
   context.fillStyle = "rgba(255,255,255,.96)";
   canvasRoundRect(context, 105, 105, 510, 278, 34);
