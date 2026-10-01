@@ -110,6 +110,15 @@ img { max-width: 100%; display: block; }
 .alerts { display: grid; gap: 10px; }
 .alert { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; border-radius: 18px; padding: 15px 18px; background: #fff5d9; border: 1px solid #f1d98d; }
 .alert-icon { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: #fff; }
+.alert-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .alert strong, .alert span { display: block; }
 .alert span { color: #6e5d37; font-size: .9rem; }
 .alert button { border: 0; background: transparent; color: var(--purple); font-weight: 800; cursor: pointer; }
