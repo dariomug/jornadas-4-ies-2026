@@ -799,7 +799,7 @@ function showClosingFeedback(button) {
     window.setTimeout(() => {
       if (feedback.open) feedback.close();
     }, 140);
-  }, 2400);
+  }, 1000);
 }
 
 function bindInstantClose(buttonSelector, closeDialog) {
