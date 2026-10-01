@@ -777,7 +777,7 @@ let closingFeedbackTimer;
 function showClosingFeedback(button) {
   let feedback = $("#closing-feedback");
   if (!feedback) {
-    feedback = document.createElement("div");
+    feedback = document.createElement("dialog");
     feedback.id = "closing-feedback";
     feedback.className = "closing-feedback";
     feedback.setAttribute("role", "status");
@@ -789,10 +789,17 @@ function showClosingFeedback(button) {
   feedback.style.top = `${Math.min(window.innerHeight - 64, rect.bottom + 10)}px`;
   feedback.style.right = `${Math.max(12, window.innerWidth - rect.right)}px`;
   feedback.classList.remove("show");
+  if (feedback.open) feedback.close();
+  feedback.showModal();
   void feedback.offsetWidth;
   feedback.classList.add("show");
   clearTimeout(closingFeedbackTimer);
-  closingFeedbackTimer = window.setTimeout(() => feedback.classList.remove("show"), 2400);
+  closingFeedbackTimer = window.setTimeout(() => {
+    feedback.classList.remove("show");
+    window.setTimeout(() => {
+      if (feedback.open) feedback.close();
+    }, 140);
+  }, 2400);
 }
 
 function bindInstantClose(buttonSelector, closeDialog) {
